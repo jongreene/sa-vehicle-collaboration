@@ -1,5 +1,5 @@
 Installing Dependencies
 =======================
 
-$/server> cd modules
-$/server/modules>python3 build.py
+<!-- Install dependencies -->
+$/server> pip install -r requirements.txt
