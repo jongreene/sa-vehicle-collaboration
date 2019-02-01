@@ -15,7 +15,7 @@ def mapCSV(csv_file):
 	
 	# TODO: search and correct for missing csv values 
 
-	#return the gradient of the map
+	#return the x, y gradients
 	[gx1, gy1] = np.gradient(m1)
 	
 	print("\nGradient in the 'x direction':")
@@ -25,7 +25,7 @@ def mapCSV(csv_file):
 	
 	vehicleMetrics = {'maxPitchSlope': 2, 'maxRollSlope': 2}
 	
-	constructAstarArray(gx1, gy1, vehicleMetrics);
+	constructAstarArray(gx1, gy1, vehicleMetrics)
 	
 def constructAstarArray(xGradientArray, yGradientArray, vehicleMetrics):
 	# maybe remove this line, doing this could lead to the vehicle
