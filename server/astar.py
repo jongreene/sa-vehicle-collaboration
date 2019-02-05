@@ -3,9 +3,11 @@ import numpy as np
 import cv2 as cv
 
 # OPEN CV CONSTANTS
-line_width = 3
-line_color = (0, 0, 255)
+line_width = 1
+line_color = (255, 255, 255)
 file_name = 'pretty.png'
+start_color = (0,255,0)
+end_color = (0,0,255)
 
 class Node():
 	"""A node class for A* Pathfinding"""
@@ -112,6 +114,7 @@ def main():
 
 	# GENERATE A MAZE WITH A PATH
 	n = 240
+
 	maze = [[0] * n for i in range(n)]
 
 	for i in range(0, len(maze)):
@@ -144,16 +147,22 @@ def main():
 	start = (0, 0)
 	end = (n - 1, n - 1)
 
-	#for row in maze:
-	#	print(row)
+	for row in maze:
+		print(row)
 	
 	path = astar(maze, start, end)
 	
-	#print(path)
+	print(path)
 	img = np.zeros((len(maze), len(maze[0]), 3), np.uint8)
 	print(len(path))
-	for i in range(len(path)-1):
-		cv.line(img, path[i], path[i+1], line_color, line_width)
+	for i in range(len(path)):
+		if i == 0:
+			img[path[i][1],path[i][0]] = start_color
+		elif i == len(path) - 1:
+			img[path[i][1],path[i][0]] = end_color
+		else: 
+			img[path[i][1],path[i][0]] = line_color
+			#cv.line(img, path[i], path[i+1], line_color, line_width)
 	cv.imwrite(file_name, img)
 
 if __name__ == '__main__':
