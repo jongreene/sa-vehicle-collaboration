@@ -1,13 +1,20 @@
 import random
 import numpy as np
 import cv2 as cv
+import time
+
+# OUTPUT CONDITIONALS
+print_matrix = False
+print_path = False
 
 # OPEN CV CONSTANTS
 line_width = 1
-line_color = (255, 255, 255)
-file_name = 'pretty.png'
+line_color = (255, 0, 0)
+file_name = 'path.png'
 start_color = (0,255,0)
 end_color = (0,0,255)
+wall_color = (0,0,0)
+open_color = (255,255,255)
 
 class Node():
 	"""A node class for A* Pathfinding"""
@@ -114,6 +121,8 @@ def main():
 
 	# GENERATE A MAZE WITH A PATH
 	n = 240
+	start = (0, 0)
+	end = (n - 1, n - 1)
 
 	maze = [[0] * n for i in range(n)]
 
@@ -142,19 +151,32 @@ def main():
 				b = random.randint(-1, 1)
 				maze[i+a][j+b] = 0
 
+	maze[0][0] = 0
+	maze[n - 1][n - 1] = 0
 	# END MAP GENERATE
 
-	start = (0, 0)
-	end = (n - 1, n - 1)
-
-	for row in maze:
-		print(row)
+	# CONDITIONALLY PRINT MAZE
+	if print_matrix:
+		for row in maze:
+			print(row)
 	
+	# BEGIN PATHFINDING
+	timer_start = time.time()
 	path = astar(maze, start, end)
+	timer_end = time.time()
+	print("Path found in " + str(round(timer_end - timer_start, 3)) + " seconds")
+	print("Path length: " + str(len(path)))
+
+	# CONDITIONALLY PRINT PATH
+	print_path and print(path)
 	
-	print(path)
+	# CREATE IMAGE SHOWING PATH THROUGH MAZE
 	img = np.zeros((len(maze), len(maze[0]), 3), np.uint8)
-	print(len(path))
+
+	for i in range(n):
+		for j in range(n):
+			img[i][j] = wall_color if maze[i][j] == 1 else open_color
+	
 	for i in range(len(path)):
 		if i == 0:
 			img[path[i][1],path[i][0]] = start_color
@@ -162,8 +184,11 @@ def main():
 			img[path[i][1],path[i][0]] = end_color
 		else: 
 			img[path[i][1],path[i][0]] = line_color
-			#cv.line(img, path[i], path[i+1], line_color, line_width)
 	cv.imwrite(file_name, img)
+
+	print("Image saved as '" + file_name + "'")
+
+	# END IMAGE CREATION
 
 if __name__ == '__main__':
 	main()

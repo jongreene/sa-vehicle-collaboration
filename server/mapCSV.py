@@ -1,5 +1,8 @@
 import sys, os
-import numpy as np 
+import numpy as np
+import matplotlib.pyplot as plt
+import importlib
+importlib.import_module('mpl_toolkits.mplot3d').Axes3D
 
 def mapCSV(csv_file):
 	# make sure the file exists and is correct
@@ -9,23 +12,22 @@ def mapCSV(csv_file):
 	
 	# generate a numpy array from the csv with type float
 	m1 = np.genfromtxt(csv_file, dtype=float, delimiter=',')
-
-	print("Given array:")
-	print(m1)
 	
 	# TODO: search and correct for missing csv values 
 
 	#return the x, y gradients
-	[gx1, gy1] = np.gradient(m1)
+	# [gx1, gy1] = np.gradient(m1)
 	
-	print("\nGradient in the 'x direction':")
-	print(gx1)
-	print("\nGradient in the 'y direction':")
-	print(gy1)
+	# print("\nGradient in the 'x direction':")
+	# print(gx1)
+	# print("\nGradient in the 'y direction':")
+	# print(gy1)
 	
-	vehicleMetrics = {'maxPitchSlope': 2, 'maxRollSlope': 2}
+	# vehicleMetrics = {'maxPitchSlope': 2, 'maxRollSlope': 2}
 	
-	constructAstarArray(gx1, gy1, vehicleMetrics)
+	# constructAstarArray(gx1, gy1, vehicleMetrics)
+
+	return m1
 	
 def constructAstarArray(xGradientArray, yGradientArray, vehicleMetrics):
 	# maybe remove this line, doing this could lead to the vehicle
@@ -45,3 +47,19 @@ def constructAstarArray(xGradientArray, yGradientArray, vehicleMetrics):
 	print(arr)
 	
 	print("\nNote: 0 = traversable, 1 = not traversable, for visualization purposes")
+
+def main():
+	terrain = mapCSV('terrain.csv')
+
+	x = range(len(terrain))
+	y = range(len(terrain[0]))
+
+	figure = plt.figure()
+	surface = figure.add_subplot(111, projection='3d')
+	X, Y = np.meshgrid(x, y)
+	surface.plot_surface(X, Y, terrain)
+
+	plt.show()
+
+if __name__ == '__main__':
+	main()
