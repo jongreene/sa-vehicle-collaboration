@@ -2,6 +2,7 @@ import random
 import numpy as np
 import cv2 as cv
 import time
+import sendPath
 
 # OUTPUT CONDITIONALS
 print_matrix = False
@@ -120,9 +121,9 @@ def astar(maze, start, end):
 def main():
 
 	# GENERATE A MAZE WITH A PATH
-	n = 240
+	n = 10
 	start = (0, 0)
-	end = (n - 1, n - 1)
+	end = (n - 1, n-1)
 
 	maze = [[0] * n for i in range(n)]
 
@@ -169,6 +170,8 @@ def main():
 
 	# CONDITIONALLY PRINT PATH
 	print_path and print(path)
+
+	sendPath.makeDirections(path, 1, 'cm')
 	
 	# CREATE IMAGE SHOWING PATH THROUGH MAZE
 	img = np.zeros((len(maze), len(maze[0]), 3), np.uint8)
