@@ -3,10 +3,10 @@ import math
 # return a degree that is strictly positive
 def normalizeDirection(dir):
 	if dir < 0:
-		return (360 + dir)
+		return int(360 + dir)
 	elif dir == 0.0:
-		return 0.0
-	return dir
+		return 0
+	return int(dir)
 
 # given a path, make a list of directions with a heading and a length
 def makeDirections(path, res, unit, heading=0):
@@ -30,9 +30,9 @@ def makeDirections(path, res, unit, heading=0):
 
 		# add to directions list
 		if next_heading == old_heading: 
-			directions[-1] = (normalizeDirection(next_heading), '{}{}'.format(float(directions[-1][1].replace(unit, '')) + length, unit))
+			directions[-1] = (normalizeDirection(next_heading), '{}{}'.format(round(float(directions[-1][1].replace(unit, '')) + length, 2), unit))
 		else:
-			directions.append((normalizeDirection(next_heading), '{}{}'.format(length, unit)))
+			directions.append((normalizeDirection(next_heading), '{}{}'.format(float(length), unit)))
 		old_heading = next_heading
 
 	print(path)
