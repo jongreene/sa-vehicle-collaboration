@@ -125,7 +125,7 @@ def astar(maze, start, end):
 def main():
 
 	# GENERATE A MAZE WITH A PATH
-	n = 10
+	n = 240
 	start = (0, 0)
 	end = (n - 1, n - 1)
 
