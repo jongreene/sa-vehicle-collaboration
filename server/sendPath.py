@@ -1,12 +1,28 @@
+import bluetooth
 import math
+import time
 
 # return a degree that is strictly positive
 def normalizeDirection(dir):
 	if dir < 0:
-		return (360 + dir)
+		return int(360 + dir)
 	elif dir == 0.0:
-		return 0.0
-	return dir
+		return 0
+	return int(dir)
+
+def sendData(data):
+	serverMACAddress = '4C:BB:58:BE:BE:79'
+	port = 3
+	s = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+	s.connect((serverMACAddress, port))
+
+	for i in data:
+		s.send(str(i))
+		r = s.recv(1024)
+		print(r.decode('UTF-8'))
+		time.sleep(0.1)
+
+	s.close()
 
 # given a path, make a list of directions with a heading and a length
 def makeDirections(path, res, unit, heading=0):
@@ -29,11 +45,13 @@ def makeDirections(path, res, unit, heading=0):
 		length = res if next_heading % 90 == 0 else 1.4 * res
 
 		# add to directions list
-		if next_heading == old_heading: 
-			directions[-1] = (normalizeDirection(next_heading), '{}{}'.format(float(directions[-1][1].replace(unit, '')) + length, unit))
+		if next_heading == old_heading:
+			directions[-1] = (normalizeDirection(next_heading), '{}{}'.format(round(float(directions[-1][1].replace(unit, '')) + length, 2), unit))
 		else:
-			directions.append((normalizeDirection(next_heading), '{}{}'.format(length, unit)))
+			directions.append((normalizeDirection(next_heading), '{}{}'.format(float(length), unit)))
 		old_heading = next_heading
 
-	print(path)
-	print(directions)
+	# print(path)
+	# print(directions)
+
+	sendData(directions)
