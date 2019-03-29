@@ -1,7 +1,9 @@
+import math
 import random
 import numpy as np
 import time
-import sendPath
+import makeDirections
+from vehicle import Vehicle
 
 # seed rng for reproducable results, seed 3 gives solvable path
 random.seed(3)
@@ -36,11 +38,15 @@ class Node():
 		return self.position == other.position
 
 
-# adapted from 
+# adapted from
 # https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 
-def astar(maze, start, end):
+def astar(maze, start, end, vehicle, unit):
 	"""Returns a list of tuples as a path from the given start to the given end in the given maze"""
+
+	s_u = ''.join(i for i in unit if not i.isalpha())
+	if not s_u: s_u = '1'
+	clean_unit = float(s_u)
 
 	# Create start and end node
 	start_node = Node(None, start)
@@ -86,13 +92,23 @@ def astar(maze, start, end):
 			# Get node position
 			node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
+			#if node_position[0] == 3 and node_position[1] == 3:
+				#print('new position:', maze[node_position[0]][node_position[1]], 'angle', math.degrees(np.arctan(rise / run)))
+
 			# Make sure within range
 			if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:
 				continue
 
-			# Make sure walkable terrain
-			if maze[node_position[0]][node_position[1]] != 0:
+			rise = maze[node_position[0]][node_position[1]] - maze[current_node.position[0]][current_node.position[1]]
+			run = clean_unit * 1.4 if new_position[0] != 0 and new_position[1] != 0 else clean_unit
+
+			# Make sure walkable terrain (can we traverse)
+			#if maze[node_position[0]][node_position[1]] != 0:
+			#	continue
+			if not vehicle.canTraverse(np.arctan(rise / run)):
 				continue
+
+			print('can traverse', math.degrees(np.arctan(rise / run)))
 
 			# Create new node
 			new_node = Node(current_node, node_position)
@@ -124,6 +140,10 @@ def astar(maze, start, end):
 
 def main():
 
+	unit = 'cm'
+	power = 5
+	mass = 3
+	vehicle = Vehicle(power, mass)
 	# GENERATE A MAZE WITH A PATH
 	n = 240
 	start = (0, 0)
@@ -149,8 +169,8 @@ def main():
 				if j+next_pos[1] >= n:
 					yo = -1 *n
 				if maze[i+next_pos[0] + xo][j+next_pos[1] + yo] != 1:
-					blocked = False 
-					break 
+					blocked = False
+					break
 			if blocked:
 				a = random.randint(-1, 1)
 				b = random.randint(-1, 1)
@@ -159,15 +179,21 @@ def main():
 	maze[0][0] = 0
 	maze[n - 1][n - 1] = 0
 	# END MAP GENERATE
-	
+
+#	from numpy import genfromtxt
+#	maze = genfromtxt("../../testing/test.csv", delimiter=',')
+
 	# BEGIN PATHFINDING
+	maze = np.genfromtxt('terrain.csv', delimiter=',')
+	start = (0, 0)
+	end = (6, 6)
 	timer_start = time.time()
-	path = astar(maze, start, end)
+	path = astar(maze, start, end, vehicle, unit)
 	timer_end = time.time()
 	print("Path found in " + str(round(timer_end - timer_start, 3)) + " seconds")
 
-	sendPath.makeDirections(path, 1, 'cm')
-	
+	makeDirections.makeDirections(path, 1, unit)
+
 	if not running_on_pi:
 		# CREATE IMAGE SHOWING PATH THROUGH MAZE
 		img = np.zeros((len(maze), len(maze[0]), 3), np.uint8)
@@ -175,7 +201,7 @@ def main():
 		for i in range(n):
 			for j in range(n):
 				img[i][j] = wall_color if maze[i][j] == 1 else open_color
-		
+
 		for i in range(len(path)):
 			if i == 0:
 				img[path[i][1],path[i][0]] = start_color

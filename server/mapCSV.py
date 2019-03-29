@@ -13,9 +13,7 @@ def mapCSV(csv_file):
 	# generate a numpy array from the csv with type float
 	m1 = np.genfromtxt(csv_file, dtype=float, delimiter=',')
 
-	# TODO: search and correct for missing csv values
-
-	#return the x, y gradients
+	# return the x, y gradients
 	# [gx1, gy1] = np.gradient(m1)
 
 	# print("\nGradient in the 'x direction':")
