@@ -37,4 +37,3 @@ def makeDirections(path, res, unit, heading=0):
 		old_heading = next_heading
 
 	# send directions over ble uart here
-	print(path)

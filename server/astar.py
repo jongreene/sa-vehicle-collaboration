@@ -92,9 +92,6 @@ def astar(maze, start, end, vehicle, unit):
 			# Get node position
 			node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
-			#if node_position[0] == 3 and node_position[1] == 3:
-				#print('new position:', maze[node_position[0]][node_position[1]], 'angle', math.degrees(np.arctan(rise / run)))
-
 			# Make sure within range
 			if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:
 				continue
@@ -103,12 +100,10 @@ def astar(maze, start, end, vehicle, unit):
 			run = clean_unit * 1.4 if new_position[0] != 0 and new_position[1] != 0 else clean_unit
 
 			# Make sure walkable terrain (can we traverse)
-			#if maze[node_position[0]][node_position[1]] != 0:
-			#	continue
-			if not vehicle.canTraverse(np.arctan(rise / run)):
+			# if maze[node_position[0]][node_position[1]] != 0:
+			# 	continue
+			if not vehicle.canTraverse(-np.arctan(rise / run)):
 				continue
-
-			print('can traverse', math.degrees(np.arctan(rise / run)))
 
 			# Create new node
 			new_node = Node(current_node, node_position)
@@ -145,52 +140,52 @@ def main():
 	mass = 3
 	vehicle = Vehicle(power, mass)
 	# GENERATE A MAZE WITH A PATH
-	n = 240
-	start = (0, 0)
-	end = (n - 1, n - 1)
+	# n = 240
+	# start = (0, 0)
+	# end = (n - 1, n - 1)
 
-	maze = [[0] * n for i in range(n)]
+	# maze = [[0] * n for i in range(n)]
 
-	for i in range(0, len(maze)):
-		for j in range(len(maze[i])):
-			a = random.randint(1, 10)
-			b = random.randint(1, 10)
-			maze[i][j] = 1 if a % b == 0 else 0
+	# for i in range(0, len(maze)):
+	# 	for j in range(len(maze[i])):
+	# 		a = random.randint(1, 10)
+	# 		b = random.randint(1, 10)
+	# 		maze[i][j] = 1 if a % b == 0 else 0
 
-	# try and make sure that every block isn't completely surrounded 
-	for i in range(len(maze)):
-		for j in range(len(maze[i])):
-			blocked = True
-			for next_pos in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]:
-				xo = 0
-				yo = 0
-				if i+next_pos[0] >= n:
-					xo = -1 * n
-				if j+next_pos[1] >= n:
-					yo = -1 *n
-				if maze[i+next_pos[0] + xo][j+next_pos[1] + yo] != 1:
-					blocked = False
-					break
-			if blocked:
-				a = random.randint(-1, 1)
-				b = random.randint(-1, 1)
-				maze[i+a][j+b] = 0
+	# # try and make sure that every block isn't completely surrounded 
+	# for i in range(len(maze)):
+	# 	for j in range(len(maze[i])):
+	# 		blocked = True
+	# 		for next_pos in [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]:
+	# 			xo = 0
+	# 			yo = 0
+	# 			if i+next_pos[0] >= n:
+	# 				xo = -1 * n
+	# 			if j+next_pos[1] >= n:
+	# 				yo = -1 *n
+	# 			if maze[i+next_pos[0] + xo][j+next_pos[1] + yo] != 1:
+	# 				blocked = False
+	# 				break
+	# 		if blocked:
+	# 			a = random.randint(-1, 1)
+	# 			b = random.randint(-1, 1)
+	# 			maze[i+a][j+b] = 0
 
-	maze[0][0] = 0
-	maze[n - 1][n - 1] = 0
+	# maze[0][0] = 0
+	# maze[n - 1][n - 1] = 0
 	# END MAP GENERATE
-
-#	from numpy import genfromtxt
-#	maze = genfromtxt("../../testing/test.csv", delimiter=',')
 
 	# BEGIN PATHFINDING
 	maze = np.genfromtxt('terrain.csv', delimiter=',')
+	n = len(maze)
 	start = (0, 0)
 	end = (6, 6)
 	timer_start = time.time()
 	path = astar(maze, start, end, vehicle, unit)
 	timer_end = time.time()
 	print("Path found in " + str(round(timer_end - timer_start, 3)) + " seconds")
+
+	print(path)
 
 	makeDirections.makeDirections(path, 1, unit)
 
