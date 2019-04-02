@@ -9,6 +9,5 @@ class Vehicle:
 	# https://robotics.stackexchange.com/questions/7796/calculating-required-torque
 	def canTraverse(self, angle):
 		#return (self.power / (self.mass * 9.8 * (math.sin(angle) + self.mu * math.cos(angle)))) > 0
-		max_incline = 80
-
+		max_incline = 20
 		return math.degrees(angle) < max_incline

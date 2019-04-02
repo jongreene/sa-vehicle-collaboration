@@ -130,7 +130,7 @@ def astar(maze, start, end, vehicle, unit):
 
 def main():
 
-	unit = 'cm'
+	unit = '15cm'
 	power = 5
 	mass = 3
 	vehicle = Vehicle(power, mass)
@@ -147,7 +147,7 @@ def main():
 
 	print(path)
 
-	makeDirections.makeDirections(path, 1, unit)
+	makeDirections.makeDirections(path, unit)
 
 	if not running_on_pi:
 		# CREATE IMAGE SHOWING PATH THROUGH MAZE

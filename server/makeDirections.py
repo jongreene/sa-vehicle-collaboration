@@ -1,24 +1,16 @@
 import math
 import time
 
-# return a degree that is strictly positive
-def normalizeDirection(dir):
-	# if dir < 0:
-	# 	return int(360 + dir)
-	# elif dir == 0.0:
-	# 	return 0
-	# return int(dir)
-
-	if dir == 0:
-		return 0
-
-	return int(dir)
-
 # given a path, make a list of directions with a heading and a length
-def makeDirections(path, res, unit, heading=0):
+def makeDirections(path, unit, heading=0):
 	next_heading = heading
 	old_heading = heading
 	directions = []
+
+	s_u = ''.join(i for i in unit if not i.isalpha())
+	unit = ''.join(i for i in unit if not i.isdigit())
+	if not s_u: s_u = '1'
+	res = float(s_u)
 
 	for i in range(len(path)-1):
 		curr_pos = path[i]
@@ -36,9 +28,9 @@ def makeDirections(path, res, unit, heading=0):
 
 		# add to directions list
 		if next_heading == old_heading:
-			directions[-1] = (normalizeDirection(next_heading), '{}{}'.format(round(float(directions[-1][1].replace(unit, '')) + length, 2), unit))
+			directions[-1] = (int(next_heading), '{}{}'.format(round(float(directions[-1][1].replace(unit, '')) + length, 2), unit))
 		else:
-			directions.append((normalizeDirection(next_heading) - old_heading, '{}{}'.format(float(length), unit)))
+			directions.append((int(next_heading) - old_heading, '{}{}'.format(float(length), unit)))
 		old_heading = next_heading
 
 	# send directions over ble uart here
