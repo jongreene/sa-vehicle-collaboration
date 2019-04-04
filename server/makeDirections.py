@@ -1,5 +1,6 @@
 import math
 import time
+import connection
 
 # given a path, make a list of directions with a heading and a length
 def makeDirections(path, unit, heading=0):
@@ -34,4 +35,4 @@ def makeDirections(path, unit, heading=0):
 		old_heading = next_heading
 
 	# send directions over ble uart here
-	print(directions)
+	connection.send(directions)
