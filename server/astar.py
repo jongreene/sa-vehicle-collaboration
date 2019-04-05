@@ -145,8 +145,6 @@ def main():
 	timer_end = time.time()
 	print("Path found in " + str(round(timer_end - timer_start, 3)) + " seconds")
 
-	print(path)
-
 	makeDirections.makeDirections(path, unit)
 
 	if not running_on_pi:

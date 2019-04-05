@@ -1,6 +1,7 @@
 # Example of interaction with a BLE UART device using a UART service
 # implementation.
 # Author: Tony DiCola
+import time
 import Adafruit_BluefruitLE
 from Adafruit_BluefruitLE.services import UART
 
@@ -77,6 +78,23 @@ def main():
         for d in data:
             data_string = str(d) + '\r\n'
             uart.write(data_string.encode('UTF-8'))
+
+            response = 0
+
+            while response == 0:
+                received = uart.read(timeout_sec=30)
+
+                while received[-1] != '\n':
+                    received = received + uart.read(timeout_sec=30)
+
+                print(received.rstrip('\r').rstrip('\n'))
+
+                if received and received.rstrip('\r').rstrip('\n') == 'ack':
+                    response = 1
+                else:
+                    uart.write(data_string.encode('UTF-8'))
+
+        uart.write('end of data'.encode('UTF-8'))
 
     finally:
         # Make sure device is disconnected on exit.
