@@ -2,23 +2,7 @@ import math
 import random
 import numpy as np
 import time
-import makeDirections
 from vehicle import Vehicle
-
-# Disables unnecessary features when running on raspberry pi
-running_on_pi = True
-
-if not running_on_pi:
-	import cv2 as cv
-
-# OPEN CV CONSTANTS
-line_width = 1
-line_color = (255, 0, 0)
-file_name = 'path.png'
-start_color = (0,255,0)
-end_color = (0,0,255)
-wall_color = (0,0,0)
-open_color = (255,255,255)
 
 class Node():
 	"""A node class for A* Pathfinding"""
@@ -38,7 +22,7 @@ class Node():
 # adapted from
 # https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 
-def astar(maze, start, end, vehicle, unit):
+def findPath(maze, start, end, vehicle, unit):
 	"""Returns a list of tuples as a path from the given start to the given end in the given maze"""
 
 	s_u = ''.join(i for i in unit if not i.isalpha())
@@ -126,47 +110,3 @@ def astar(maze, start, end, vehicle, unit):
 
 			# Add the child to the open list
 			open_list.append(child)
-
-
-def main():
-
-	unit = '15cm'
-	power = 5
-	mass = 3
-	vehicle = Vehicle(power, mass)
-
-	# BEGIN PATHFINDING
-	maze = np.genfromtxt('terrain.csv', delimiter=',')
-	n = len(maze)
-	start = (0, 0)
-	end = (n - 1, n - 1)
-	timer_start = time.time()
-	path = astar(maze, start, end, vehicle, unit)
-	timer_end = time.time()
-	print("Path found in " + str(round(timer_end - timer_start, 3)) + " seconds")
-
-	makeDirections.makeDirections(path, unit)
-
-	if not running_on_pi:
-		# CREATE IMAGE SHOWING PATH THROUGH MAZE
-		img = np.zeros((len(maze), len(maze[0]), 3), np.uint8)
-
-		for i in range(n):
-			for j in range(n):
-				img[i][j] = wall_color if maze[i][j] == 1 else open_color
-
-		for i in range(len(path)):
-			if i == 0:
-				img[path[i][1],path[i][0]] = start_color
-			elif i == len(path) - 1:
-				img[path[i][1],path[i][0]] = end_color
-			else: 
-				img[path[i][1],path[i][0]] = line_color
-		cv.imwrite(file_name, img)
-
-		print("Image saved as '" + file_name + "'")
-
-		# END IMAGE CREATION
-
-if __name__ == '__main__':
-	main()
