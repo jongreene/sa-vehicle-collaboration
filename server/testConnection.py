@@ -104,3 +104,4 @@ def send():
     # an integer status code, or throws an error the program will exit.
     ble.run_mainloop_with(main)
 
+send()
