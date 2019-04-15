@@ -19,8 +19,14 @@ class Vehicle:
 		if self.max is not 'None':
 			return angle < float(self.max)
 
-		if(self.type == 'all'):
+		if self.type == 'all':
 			return self.all_wheel_drive(angle)
+		
+		elif self.type == 'front':
+			return self.front_wheel_drive(angle)
+
+		elif self.type =='rear':
+			return self.rear_wheel_drive(angle)
 
 		else:
 			return False
@@ -30,7 +36,8 @@ class Vehicle:
 	def all_wheel_drive(self, angle):
 		return angle < math.atan(self.mu)
 
-	#def front_wheel_drive(self, angle):
+	def front_wheel_drive(self, angle):
+		return angle < math.atan((self.mu * self.l_r)/(self.l + self.mu * self.h))
 
-	#def rear_wheel_drive(self, angle):
-		
+	def rear_wheel_drive(self, angle):
+		return angle < math.atan((self.mu * self.l_f)/(self.l - self.mu*self.h))
