@@ -19,6 +19,7 @@ class Node():
 		return self.position == other.position
 
 def is_wide_enough(maze, loc, abs_heading, vehicle, scale):
+	thresh_grad = 12
 	# if going at 45, 135, etc change scale
 	if abs_heading % 90 != 0 or abs_heading != 0:
 		scale *= 1.4
@@ -55,7 +56,22 @@ def is_wide_enough(maze, loc, abs_heading, vehicle, scale):
 			check_2.append(maze[loc[0] + n + 1][loc[1] - n - 1])
 
 	good = 0
+	now_pos = maze[loc[0]][loc[1]]
 	# TODO: run through each of the can node and see if it can traverse then increment good if so
+	for pos in check_1:
+		if abs(pos - now_pos) > thresh_grad:
+			break 
+		good += 1
+		now_pos = pos
+
+	now_pos = maze[loc[0]][loc[1]]
+	for pos in check_2:
+		if abs(pos - now_pos) > thresh_grad:
+			break 
+		good += 1
+		now_pos = pos 
+
+	return good >= num_squares 
 
 # adapted from
 # https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
