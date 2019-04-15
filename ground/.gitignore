@@ -1,0 +1,5 @@
+lib/mbed-os/sources/*
+.idea
+cmake-build-debug
+release/*
+tools/arm-gcc-toolchain/
