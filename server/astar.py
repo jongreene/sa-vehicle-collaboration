@@ -18,10 +18,29 @@ class Node():
 	def __eq__(self, other):
 		return self.position == other.position
 
-def is_wide_enough(maze, loc, abs_heading, vehicle, scale):
+def is_wide_enough(maze, loc, next_loc, vehicle, scale):
 	thresh_grad = 12
+
+	#Determine which direction were going 
+	heading = 0
+	#going up or down
+	if loc[0] != next_loc[0] and loc[1] == next_loc[1]:
+		heading = 90
+	
+	# going left or right
+	#elif loc[0] == next_loc[0] and loc[1] != next_loc[1]:
+	
+	# going NE or SW
+	elif next_loc[0] + next_loc[1] == 0:
+		heading = 45
+	
+	# going NW or SE
+	elif abs(next_loc[0] + next_loc[1]) == 2:
+		heading = 135
+	
+	
 	# if going at 45, 135, etc change scale
-	if abs_heading % 90 != 0 or abs_heading != 0:
+	if heading != 0 or heading != 90:
 		scale *= 1.4
 	
 	if scale > vehicle.width:
@@ -31,42 +50,43 @@ def is_wide_enough(maze, loc, abs_heading, vehicle, scale):
 	check_1 = []
 	check_2 = []
 
-	if abs_heading == 90 or abs_heading == 270:
-		for n in range(num_squares):
-			check_1.append(maze[loc[0] + n + 1][loc[1]])
-		for n in range(num_squares):
-			check_2.append(maze[loc[0] - n - 1][loc[1]])
-
-	elif abs_heading == 180 or abs_heading == 0:
+	if heading == 90:
 		for n in range(num_squares):
 			check_1.append(maze[loc[0]][loc[1] + n + 1])
 		for n in range(num_squares):
 			check_2.append(maze[loc[0]][loc[1] - n - 1])
 
-	elif abs_heading == 45 or abs_heading == 225:
+	elif heading == 0:
 		for n in range(num_squares):
-			check_1.append(maze[loc[0] + n + 1][loc[1] + n + 1])
+			check_1.append(maze[loc[0] + n + 1][loc[1]])
 		for n in range(num_squares):
-			check_2.append(maze[loc[0] - n - 1][loc[1] - n - 1])
+			check_2.append(maze[loc[0] - n - 1][loc[1]])
 
-	else:
+	elif heading == 45:
 		for n in range(num_squares):
 			check_1.append(maze[loc[0] - n - 1][loc[1] + n + 1])
 		for n in range(num_squares):
 			check_2.append(maze[loc[0] + n + 1][loc[1] - n - 1])
 
+	else:
+		for n in range(num_squares):
+			check_1.append(maze[loc[0] + n + 1][loc[1] + n + 1])
+		for n in range(num_squares):
+			check_2.append(maze[loc[0] - n - 1][loc[1] - n - 1])
+		
+
 	good = 0
 	now_pos = maze[loc[0]][loc[1]]
 	# TODO: run through each of the can node and see if it can traverse then increment good if so
 	for pos in check_1:
-		if abs(pos - now_pos) > thresh_grad:
+		if abs(pos - now_pos)/scale > thresh_grad:
 			break 
 		good += 1
 		now_pos = pos
 
 	now_pos = maze[loc[0]][loc[1]]
 	for pos in check_2:
-		if abs(pos - now_pos) > thresh_grad:
+		if abs(pos - now_pos)/scale > thresh_grad:
 			break 
 		good += 1
 		now_pos = pos 
@@ -138,6 +158,9 @@ def findPath(maze, start, end, vehicle, unit):
 			if not vehicle.canTraverse(-np.arctan(rise / run)):
 				continue
 
+			# Make sure terrain is wide enough to accomodate the vehicle
+			if not is_wide_enough(maze, current_node.position, node_position, vehicle, clean_unit):
+				continue
 			# Create new node
 			new_node = Node(current_node, node_position)
 
