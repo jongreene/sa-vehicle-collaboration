@@ -19,7 +19,7 @@ class Node():
 		return self.position == other.position
 
 def is_wide_enough(maze, loc, next_loc, vehicle, scale):
-	thresh_grad = 12
+	thresh_grad = vehicle.clearance
 
 	#Determine which direction were going 
 	heading = 0

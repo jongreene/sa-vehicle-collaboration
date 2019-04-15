@@ -12,8 +12,7 @@ class Vehicle:
 		self.l_r = float(opts['dimensions']['CoM-rear'])
 		self.h = float(opts['dimensions']['CoM-height'])
 		self.max = opts['max-hill-rads']
-
-
+		self.clearance = float(opts['dimensions']['min-clearance'])
 
 	def canTraverse(self, angle):
 		if self.max is not 'None':

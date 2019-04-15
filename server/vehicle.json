@@ -10,7 +10,8 @@
 		"wheel-base": "18",
 		"CoM-front": "9",
 		"CoM-rear": "9",
-		"CoM-height": "8"
+		"CoM-height": "8",
+		"min-clearance": "5"
 	},
 	"power": {
 		"front": "8",
