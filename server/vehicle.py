@@ -1,10 +1,36 @@
 import math
 
 class Vehicle:
-	def __init__(self, mu=0.8):
-		self.mu = mu
+	def __init__(self, opts):
+		self.mu = float(opts['mu'])
+		self.weight = float(opts['weight'])
+		self.width = float(opts['dimensions']['width'])
+		self.length = float(opts['dimensions']['length'])
+		self.type = opts['drive-type']
+		self.l = float(opts['dimensions']['wheel-base'])
+		self.l_f = float(opts['dimensions']['CoM-front'])
+		self.l_r = float(opts['dimensions']['CoM-rear'])
+		self.h = float(opts['dimensions']['CoM-height'])
+		self.max = opts['max-hill-rads']
 
-	# https://robotics.stackexchange.com/questions/7796/calculating-required-torque
+
+
 	def canTraverse(self, angle):
-		max_incline = math.atan(self.mu)
-		return angle < max_incline
+		if self.max is not 'None':
+			return angle < float(self.max)
+
+		if(self.type == 'all'):
+			return self.all_wheel_drive(angle)
+
+		else:
+			return False
+
+	# all equations for vehicle climbing taken from 
+	# http://www.thecartech.com/subjects/auto_eng/Max_gradient.pdf
+	def all_wheel_drive(self, angle):
+		return angle < math.atan(self.mu)
+
+	#def front_wheel_drive(self, angle):
+
+	#def rear_wheel_drive(self, angle):
+		

@@ -1,0 +1,23 @@
+{
+	"units": {
+		"weight": "kg",
+		"length": "cm",
+		"power": "watts"
+	},
+	"dimensions": {
+		"width": "22",
+		"length": "22",
+		"wheel-base": "18",
+		"CoM-front": "9",
+		"CoM-rear": "9",
+		"CoM-height": "8"
+	},
+	"power": {
+		"front": "8",
+		"rear": "8"
+	},
+	"drive-type": "all",
+	"weight": "5",
+	"mu": ".8",
+	"max-hill-rads": "None"
+}
