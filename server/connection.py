@@ -11,20 +11,45 @@ data = None
 
 ble = Adafruit_BluefruitLE.get_provider()
 
+def turn(a):
+	s = '{drive,two_wheel,'
+	if int(a) > 0:
+		s = s + '75,-75,'
+	else:
+		s = s + '-75,75,'
+
+	if a == '90':
+		s = s + '.71}'
+	elif a == '-90':
+		s = s + '.75}'
+	elif a == '45':
+		s = s + '.31}'
+	elif a == '-45':
+		s = s + '.38}'
+
+	send_cmd(s)
+
+def move(d):
+	# speed in meters per second when duty cycle = 75
+	mps = 0.43406
+	t = str(round((float(d) / mps), 4))
+	s = '{drive,two_wheel,75,75,' + t + '}'
+	send_cmd(s)
+
 def chunkstring(string, length):
 	return (string[0+i:length+i] for i in range(0, len(string), length))
 
 def send_cmd(string):
 	global uart
-	substrings = list(chunkstring(string, 16))
-	substrings.append('\n')
-	for string in substrings:
-		uart.write(string.encode('UTF-8'))
-	received = uart.read(timeout_sec=60)
-	while received[-1] != '\n':
-		received = received + uart.read(timeout_sec=60)
+	substrings = list(chunkstring(string + '\n', 16))
+	debug and print('Substrings:', substrings)
+	for s in substrings:
+		uart.write(s.encode('UTF-8'))
+	received = uart.read(timeout_sec=2)
+	while received is not None and received[-1] != '\n':
+		received = received + uart.read(timeout_sec=2)
 	if received is not None:
-		print(received[:-1])
+		print('Received:', received[:-1])
 	else:
 		print('No data received')
 
@@ -57,24 +82,36 @@ def main():
 		global uart
 		uart = UART(device)
 
-		# global data
-		# send data here
-
-		while True:
+		while debug:
 			s = input('>> ')
 			if s == 's':
 				s = '{drive,two_wheel,0,0}'
-			elif len(s.split(' ')) == 2:
-				s = '{drive,two_wheel,' + s.split(' ')[0] + ',' + s.split(' ')[1] + '}'
-			elif len(s.split(' ')) == 4 and s.split(' ')[0] == 't':
+				send_cmd(s)
+			elif s.split(' ')[0] == 't':
 				s1 = '{drive,two_wheel,' + s.split(' ')[1] + ',' + s.split(' ')[2] + '}'
-				send(s1)
+				send_cmd(s1)
 				time.sleep(float(s.split(' ')[3]))
 				s = '{drive,two_wheel,0,0}'
+				send_cmd(s)
+			elif s.split(' ')[0] == 'd':
+				move(s.split(' ')[1])
+			elif s.split(' ')[0] == 'a':
+				turn(s.split(' ')[1])
+			elif len(s.split(' ')) == 2:
+				s = '{drive,two_wheel,' + s.split(' ')[0] + ',' + s.split(' ')[1] + '}'
+				send_cmd(s)
+			elif len(s.split(' ')) == 3:
+				s = '{drive,two_wheel,' + s.split(' ')[0] + ',' + s.split(' ')[1] + ',' + s.split(' ')[2] + '}'
+				send_cmd(s)
 			elif len(s.split(' ')) == 4:
 				s = '{drive,four_wheel,' + s.split(' ')[0] + ',' + s.split(' ')[1] + ',' + s.split(' ')[2] + ',' + s.split(' ')[3] + '}'
+				send_cmd(s)
 
-			send_cmd(s)
+
+		global data
+		for d in data:
+			turn(d[0])
+			move(d[1])
 
 	finally:
 		device.disconnect()
