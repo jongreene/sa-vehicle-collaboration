@@ -4,37 +4,39 @@ import Adafruit_BluefruitLE
 from Adafruit_BluefruitLE.services import UART
 import time
 
-debug = True
+debug = False
 
 uart = None
 data = None
 
 ble = Adafruit_BluefruitLE.get_provider()
 
+turn_values = {'90': .82, '-90': .84, '45': .42, '-45': .42}
+
+data = [('90', '1'), ('90', '1'), ('90', '1'), ('90', '1')]
+
 def turn(a):
+
 	s = '{drive,two_wheel,'
 	if int(a) > 0:
 		s = s + '75,-75,'
 	else:
 		s = s + '-75,75,'
 
-	if a == '90':
-		s = s + '.71}'
-	elif a == '-90':
-		s = s + '.75}'
-	elif a == '45':
-		s = s + '.31}'
-	elif a == '-45':
-		s = s + '.38}'
+	s = s + str(turn_values[a]) + '}'
 
 	send_cmd(s)
 
-def move(d):
+	return turn_values[a]
+
+# d = distance in meters
+def drive(d):
 	# speed in meters per second when duty cycle = 75
 	mps = 0.43406
 	t = str(round((float(d) / mps), 4))
 	s = '{drive,two_wheel,75,75,' + t + '}'
 	send_cmd(s)
+	return float(t)
 
 def chunkstring(string, length):
 	return (string[0+i:length+i] for i in range(0, len(string), length))
@@ -110,8 +112,8 @@ def main():
 
 		global data
 		for d in data:
-			turn(d[0])
-			move(d[1])
+			time.sleep(turn(d[0] + 1)
+			time.sleep(drive(d[1] + 1)
 
 	finally:
 		device.disconnect()

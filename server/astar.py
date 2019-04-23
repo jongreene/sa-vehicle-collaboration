@@ -21,30 +21,30 @@ class Node():
 def is_wide_enough(maze, loc, next_loc, vehicle, scale):
 	thresh_grad = vehicle.clearance
 
-	#Determine which direction were going 
+	#Determine which direction were going
 	heading = 0
 	#going up or down
 	if loc[0] != next_loc[0] and loc[1] == next_loc[1]:
 		heading = 90
-	
+
 	# going left or right
-	#elif loc[0] == next_loc[0] and loc[1] != next_loc[1]:
-	
+	elif loc[0] == next_loc[0] and loc[1] != next_loc[1]:
+		heading = 0
+
 	# going NE or SW
-	elif next_loc[0] + next_loc[1] == 0:
+	elif next_loc[0] * next_loc[1] > 0:
 		heading = 45
-	
+
 	# going NW or SE
-	elif abs(next_loc[0] + next_loc[1]) == 2:
+	elif next_loc[0] * next_loc[1] < 0:
 		heading = 135
-	
-	
+
 	# if going at 45, 135, etc change scale
 	if heading != 0 or heading != 90:
 		scale *= 1.4
-	
+
 	if scale > vehicle.width:
-		return True 
+		return True
 
 	num_squares = math.ceil(vehicle.width / scale)
 	check_1 = []
@@ -73,21 +73,20 @@ def is_wide_enough(maze, loc, next_loc, vehicle, scale):
 			check_1.append(maze[loc[0] + n + 1][loc[1] + n + 1])
 		for n in range(num_squares):
 			check_2.append(maze[loc[0] - n - 1][loc[1] - n - 1])
-		
 
 	good = 0
 	now_pos = maze[loc[0]][loc[1]]
 	# TODO: run through each of the can node and see if it can traverse then increment good if so
 	for pos in check_1:
 		if abs(pos - now_pos)/scale > thresh_grad:
-			break 
+			break
 		good += 1
 		now_pos = pos
 
 	now_pos = maze[loc[0]][loc[1]]
 	for pos in check_2:
 		if abs(pos - now_pos)/scale > thresh_grad:
-			break 
+			break
 		good += 1
 		now_pos = pos 
 
@@ -161,7 +160,7 @@ def findPath(maze, start, end, vehicle, unit):
 			# Make sure terrain is wide enough to accomodate the vehicle
 			if not is_wide_enough(maze, current_node.position, node_position, vehicle, clean_unit):
 				continue
-				
+
 			# Create new node
 			new_node = Node(current_node, node_position)
 
