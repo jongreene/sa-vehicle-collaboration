@@ -14,13 +14,16 @@ class Vehicle:
 		self.max = opts['max-hill-rads']
 		self.clearance = float(opts['dimensions']['min-clearance'])
 
-	def canTraverse(self, angle):
+	def canTraverse(self, angle, rise):
 		if self.max is not 'None':
 			return angle < float(self.max)
 
+		if self.clearance > rise:
+			return True
+
 		if self.type == 'all':
 			return self.all_wheel_drive(angle)
-		
+
 		elif self.type == 'front':
 			return self.front_wheel_drive(angle)
 
@@ -30,7 +33,7 @@ class Vehicle:
 		else:
 			return False
 
-	# all equations for vehicle climbing taken from 
+	# all equations for vehicle climbing taken from
 	# http://www.thecartech.com/subjects/auto_eng/Max_gradient.pdf
 	def all_wheel_drive(self, angle):
 		return angle < math.atan(self.mu)

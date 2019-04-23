@@ -5,13 +5,13 @@
 		"power": "watts"
 	},
 	"dimensions": {
-		"width": "22",
-		"length": "22",
+		"width": "29",
+		"length": "26",
 		"wheel-base": "18",
 		"CoM-front": "9",
 		"CoM-rear": "9",
 		"CoM-height": "8",
-		"min-clearance": "5"
+		"min-clearance": "10"
 	},
 	"power": {
 		"front": "8",

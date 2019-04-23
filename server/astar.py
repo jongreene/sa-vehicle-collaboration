@@ -154,7 +154,7 @@ def findPath(maze, start, end, vehicle, unit):
 			run = clean_unit * 1.4 if new_position[0] != 0 and new_position[1] != 0 else clean_unit
 
 			# Make sure walkable terrain (can we traverse)
-			if not vehicle.canTraverse(-np.arctan(rise / run)):
+			if not vehicle.canTraverse(-np.arctan(rise / run), rise):
 				continue
 
 			# Make sure terrain is wide enough to accomodate the vehicle
