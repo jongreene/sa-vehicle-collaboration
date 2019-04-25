@@ -158,9 +158,9 @@ def findPath(maze, start, end, vehicle, unit):
 				continue
 
 			# Make sure terrain is wide enough to accomodate the vehicle
-			if not is_wide_enough(maze, current_node.position, node_position, vehicle, clean_unit):
-				continue
-
+			# if not is_wide_enough(maze, current_node.position, node_position, vehicle, clean_unit):
+			# 	continue
+			
 			# Create new node
 			new_node = Node(current_node, node_position)
 

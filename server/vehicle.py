@@ -14,32 +14,34 @@ class Vehicle:
 		self.max = opts['max-hill-rads']
 		self.clearance = float(opts['dimensions']['min-clearance'])
 
-	def canTraverse(self, angle, rise):
-		if self.max is not 'None':
-			return angle < float(self.max)
-
-		if self.clearance > rise:
-			return True
+		if self.max != 'None':
+			return
 
 		if self.type == 'all':
-			return self.all_wheel_drive(angle)
+			self.max = self.all_wheel_drive()
 
 		elif self.type == 'front':
-			return self.front_wheel_drive(angle)
+			self.max = self.front_wheel_drive()
 
 		elif self.type =='rear':
-			return self.rear_wheel_drive(angle)
+			self.max = self.rear_wheel_drive()
 
-		else:
-			return False
+	def canTraverse(self, angle, rise):
+		if self.max != 'None':
+			return angle < float(self.max)
+
+		if self.clearance > abs(rise):
+			return True
+
+		return False
 
 	# all equations for vehicle climbing taken from
 	# http://www.thecartech.com/subjects/auto_eng/Max_gradient.pdf
-	def all_wheel_drive(self, angle):
-		return angle < math.atan(self.mu)
+	def all_wheel_drive(self):
+		return math.atan(self.mu)
 
-	def front_wheel_drive(self, angle):
-		return angle < math.atan((self.mu * self.l_r)/(self.l + self.mu * self.h))
+	def front_wheel_drive(self):
+		return math.atan((self.mu * self.l_r)/(self.l + self.mu * self.h))
 
-	def rear_wheel_drive(self, angle):
-		return angle < math.atan((self.mu * self.l_f)/(self.l - self.mu*self.h))
+	def rear_wheel_drive(self):
+		return math.atan((self.mu * self.l_f)/(self.l - self.mu*self.h))

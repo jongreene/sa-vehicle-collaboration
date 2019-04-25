@@ -47,7 +47,7 @@ def constructAstarArray(xGradientArray, yGradientArray, vehicleMetrics):
 	print("\nNote: 0 = traversable, 1 = not traversable, for visualization purposes")
 
 def main():
-	terrain = mapCSV("terrain.csv")
+	terrain = mapCSV("testTerrain.csv")
 
 	x = range(len(terrain))
 	y = range(len(terrain[0]))
