@@ -47,6 +47,14 @@ def send_cmd(string):
 	debug and print('Substrings:', substrings)
 	for s in substrings:
 		uart.write(s.encode('UTF-8'))
+
+	if 'hall' in string:
+		while True:
+			received = uart.read(timeout_sec=10)
+			while received is not None and received[-1] != '\n':
+				received = received + uart.read(timeout_sec=10)
+			print(received[:-1])
+
 	received = uart.read(timeout_sec=2)
 	while received is not None and received[-1] != '\n':
 		received = received + uart.read(timeout_sec=2)
@@ -109,11 +117,13 @@ def main():
 				s = '{drive,four_wheel,' + s.split(' ')[0] + ',' + s.split(' ')[1] + ',' + s.split(' ')[2] + ',' + s.split(' ')[3] + '}'
 				send_cmd(s)
 
+			send_cmd(s)
+
 
 		global data
 		for d in data:
-			time.sleep(turn(d[0] + 1)
-			time.sleep(drive(d[1] + 1)
+			time.sleep(turn(d[0] + 1))
+			time.sleep(drive(d[1] + 1))
 
 	finally:
 		device.disconnect()
