@@ -11,7 +11,7 @@ data = None
 
 ble = Adafruit_BluefruitLE.get_provider()
 
-turn_values = {'90': .82, '-90': .84, '45': .42, '-45': .42}
+turn_values = {'90': .71, '-90': .71, '45': .38, '-45': .38}
 
 data = [('90', '1'), ('90', '1'), ('90', '1'), ('90', '1')]
 
@@ -68,12 +68,12 @@ def main():
 
 	adapter = ble.get_default_adapter()
 	adapter.power_on()
-	debug and print('Using adapter: {0}'.format(adapter.name))
+	print('Using adapter: {0}'.format(adapter.name))
 
-	debug and print('Disconnecting any connected UART devices...')
+	print('Disconnecting any connected UART devices...')
 	UART.disconnect_devices()
 
-	debug and print('Searching for UART device...')
+	print('Searching for UART device...')
 	try:
 		adapter.start_scan()
 		device = UART.find_device()
@@ -82,11 +82,11 @@ def main():
 	finally:
 		adapter.stop_scan()
 
-	debug and print('Connecting to device...')
+	print('Connecting to device...')
 	device.connect()
 
 	try:
-		debug and print('Discovering services...')
+		print('Discovering services...')
 		UART.discover(device)
 
 		global uart
@@ -122,8 +122,8 @@ def main():
 
 		global data
 		for d in data:
-			time.sleep(turn(d[0] + 1))
-			time.sleep(drive(d[1] + 1))
+			time.sleep(turn(d[0]) + 1)
+			time.sleep(drive(d[1]) + 1)
 
 	finally:
 		device.disconnect()
