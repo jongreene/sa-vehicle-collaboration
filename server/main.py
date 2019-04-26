@@ -19,9 +19,9 @@ file_path = 'testTerrain.csv'
 vehicle_file = 'vehicle.json'
 
 terrain = np.genfromtxt(file_path, delimiter=',', dtype=float)
-start = (10, 10)
+start = (11, 11)
 #end = (len(terrain) - 1, len(terrain[0]) - 1)
-end = (200, 200)
+end = (190, 190)
 
 vehicle_opts = None
 with open(vehicle_file, 'r') as j:

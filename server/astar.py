@@ -27,96 +27,47 @@ class Node():
 	def __eq__(self, other):
 		return self.position == other.position
 
+def getHeading(loc, next_loc):
+	if next_loc[1] - loc[1] == 0:
+			return 90 if next_loc[1] - loc[1] < 0 else -90
+	else:
+		return math.degrees(math.atan((next_loc[0]-loc[0])/(-(next_loc[1] - loc[1]))))
+
+def n_closest(x,n,d=1):
+    return x[n[0] - d:n[0] + d + 1, n[1] - d:n[1] + d + 1]
+
 def is_wide_enough(maze, loc, next_loc, vehicle, scale):
-	thresh_grad = vehicle.clearance
-
-	#Determine which direction were going
-	heading = 0
-	#going up or down
-	if loc[0] != next_loc[0] and loc[1] == next_loc[1]:
-		heading = 90
-
-	# going left or right
-	elif loc[0] == next_loc[0] and loc[1] != next_loc[1]:
-		heading = 0
-
-	# going NE or SW
-	elif next_loc[0] * next_loc[1] > 0:
-		heading = 45
-
-	# going NW or SE
-	elif next_loc[0] * next_loc[1] < 0:
-		heading = 135
-
-	# if going at 45, 135, etc change scale
-	if heading != 0 or heading != 90:
-		scale *= 1.4
-
 	if scale > vehicle.width:
 		return True
 
-	num_squares = math.ceil(vehicle.width / (2 * scale))
-	check_1 = []
-	check_2 = []
+	thresh_grad = vehicle.clearance
 
-	if heading == 90:
-		for n in range(num_squares):
-			if loc[1] + n + 1 >= len(maze[0]):
-				continue
-			check_1.append(maze[loc[0]][loc[1] + n + 1])
-		for n in range(num_squares):
-			if loc[1] - n - 1 < 0:
-				continue
-			check_2.append(maze[loc[0]][loc[1] - n - 1])
+	#Determine which direction were going
+	heading = getHeading(loc, next_loc)
 
-	elif heading == 0:
-		for n in range(num_squares):
-			if loc[0] + n + 1 >= len(maze):
-				continue
-			check_1.append(maze[loc[0] + n + 1][loc[1]])
-		for n in range(num_squares):
-			if loc[0] - n - 1 < 0:
-				continue
-			check_2.append(maze[loc[0] - n - 1][loc[1]])
+	# if going at 45, 135, etc change scale
+	if heading % 90 != 0:
+		scale *= 1.4
 
-	elif heading == 45:
-		for n in range(num_squares):
-			if loc[0] - n - 1 < 0 or loc[1] + n + 1 >= len(maze[0]):
-				continue
-			check_1.append(maze[loc[0] - n - 1][loc[1] + n + 1])
-		for n in range(num_squares):
-			if loc[0] + n + 1 >= len(maze) or loc[1] - n - 1 < 0:
-				continue
-			check_2.append(maze[loc[0] + n + 1][loc[1] - n - 1])
+	num_squares_width = math.ceil(vehicle.width / (2 * scale))
+	num_squares_length = math.ceil(vehicle.length / (2 * scale))
 
-	else:
-		for n in range(num_squares):
-			if loc[0] + n + 1 >= len(maze) or loc[1] + n + 1 >= len(maze[0]):
-				continue
-			check_1.append(maze[loc[0] + n + 1][loc[1] + n + 1])
-		for n in range(num_squares):
-			if loc[0] - n - 1 < 0 or loc[1] - n - 1 < 0:
-				continue
-			check_2.append(maze[loc[0] - n - 1][loc[1] - n - 1])
+	radius = max(num_squares_length, num_squares_width)
 
-	good_left = 0
-	good_right = 0
-	now_pos = maze[loc[0]][loc[1]]
-	# TODO: run through each of the can node and see if it can traverse then increment good if so
-	for pos in check_1:
-		if abs(pos - now_pos)/scale > thresh_grad:
-			break
-		good_left += 1
-		now_pos = pos
+	if next_loc[0] - radius < 0 or next_loc[0] + radius >= len(maze) or next_loc[1] - radius < 0 or next_loc[1] + radius >= len(maze[0]):
+		return False
 
-	now_pos = maze[loc[0]][loc[1]]
-	for pos in check_2:
-		if abs(pos - now_pos)/scale > thresh_grad:
-			break
-		good_right += 1
-		now_pos = pos 
+	box = n_closest(maze, next_loc, radius)
 
-	return good_left >= num_squares - 1 and good_right >= num_squares - 1
+	good = 0
+
+	for i in box:
+		for j in i:
+			if abs(j - maze[next_loc[0]][next_loc[1]]) / scale > thresh_grad:
+				break
+			good += 1
+
+	return good == len(box) * len(box[0])
 
 # adapted from
 # https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
