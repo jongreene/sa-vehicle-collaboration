@@ -3,6 +3,15 @@ import random
 import numpy as np
 import time
 from vehicle import Vehicle
+import cv2 as cv
+
+line_width = 1
+line_color = (255, 0, 0)
+file_name = 'path.png'
+start_color = (0,255,0)
+end_color = (0,0,255)
+wall_color = (0,0,0)
+open_color = (255,255,255)
 
 class Node():
 	"""A node class for A* Pathfinding"""
@@ -46,51 +55,68 @@ def is_wide_enough(maze, loc, next_loc, vehicle, scale):
 	if scale > vehicle.width:
 		return True
 
-	num_squares = math.ceil(vehicle.width / scale)
+	num_squares = math.ceil(vehicle.width / (2 * scale))
 	check_1 = []
 	check_2 = []
 
 	if heading == 90:
 		for n in range(num_squares):
+			if loc[1] + n + 1 >= len(maze[0]):
+				continue
 			check_1.append(maze[loc[0]][loc[1] + n + 1])
 		for n in range(num_squares):
+			if loc[1] - n - 1 < 0:
+				continue
 			check_2.append(maze[loc[0]][loc[1] - n - 1])
 
 	elif heading == 0:
 		for n in range(num_squares):
+			if loc[0] + n + 1 >= len(maze):
+				continue
 			check_1.append(maze[loc[0] + n + 1][loc[1]])
 		for n in range(num_squares):
+			if loc[0] - n - 1 < 0:
+				continue
 			check_2.append(maze[loc[0] - n - 1][loc[1]])
 
 	elif heading == 45:
 		for n in range(num_squares):
+			if loc[0] - n - 1 < 0 or loc[1] + n + 1 >= len(maze[0]):
+				continue
 			check_1.append(maze[loc[0] - n - 1][loc[1] + n + 1])
 		for n in range(num_squares):
+			if loc[0] + n + 1 >= len(maze) or loc[1] - n - 1 < 0:
+				continue
 			check_2.append(maze[loc[0] + n + 1][loc[1] - n - 1])
 
 	else:
 		for n in range(num_squares):
+			if loc[0] + n + 1 >= len(maze) or loc[1] + n + 1 >= len(maze[0]):
+				continue
 			check_1.append(maze[loc[0] + n + 1][loc[1] + n + 1])
 		for n in range(num_squares):
+			if loc[0] - n - 1 < 0 or loc[1] - n - 1 < 0:
+				continue
 			check_2.append(maze[loc[0] - n - 1][loc[1] - n - 1])
 
-	good = 0
+	good_left = 0
+	good_right = 0
 	now_pos = maze[loc[0]][loc[1]]
 	# TODO: run through each of the can node and see if it can traverse then increment good if so
 	for pos in check_1:
 		if abs(pos - now_pos)/scale > thresh_grad:
 			break
-		good += 1
+		good_left += 1
 		now_pos = pos
 
 	now_pos = maze[loc[0]][loc[1]]
 	for pos in check_2:
 		if abs(pos - now_pos)/scale > thresh_grad:
 			break
-		good += 1
+		good_right += 1
 		now_pos = pos 
 
-	return good >= num_squares 
+	return good_left >= num_squares - 1 and good_right >= num_squares - 1
 
 # adapted from
 # https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
@@ -114,6 +140,9 @@ def findPath(maze, start, end, vehicle, unit):
 
 	# Add the start node
 	open_list.append(start_node)
+
+	timeout = 10
+	start_time = time.time()
 
 	# Loop until you find the end
 	while len(open_list) > 0:
@@ -158,8 +187,8 @@ def findPath(maze, start, end, vehicle, unit):
 				continue
 
 			# Make sure terrain is wide enough to accomodate the vehicle
-			# if not is_wide_enough(maze, current_node.position, node_position, vehicle, clean_unit):
-			# 	continue
+			if not is_wide_enough(maze, current_node.position, node_position, vehicle, clean_unit):
+				continue
 			
 			# Create new node
 			new_node = Node(current_node, node_position)
@@ -170,10 +199,15 @@ def findPath(maze, start, end, vehicle, unit):
 		# Loop through children
 		for child in children:
 
+			in_closed_list = False
+
 			# Child is on the closed list
 			for closed_child in closed_list:
 				if child == closed_child:
-					continue
+					in_closed_list = True
+			
+			if in_closed_list:
+				continue
 
 			# Create the f, g, and h values
 			child.g = current_node.g + 1
@@ -181,9 +215,29 @@ def findPath(maze, start, end, vehicle, unit):
 			child.f = child.g + child.h
 
 			# Child is already in the open list
+			in_open_list = False
 			for open_node in open_list:
 				if child == open_node and child.g > open_node.g:
-					continue
+					in_open_list = True
+
+			if in_open_list:
+				continue
 
 			# Add the child to the open list
 			open_list.append(child)
+
+		if start_time + timeout < time.time():
+			break
+
+	img = np.zeros((len(maze), len(maze[0]), 3), np.uint8)
+
+	for i in range(len(maze)):
+		for j in range(len(maze[0])):
+			img[i][j] = wall_color if maze[i][j] == 0 else open_color
+
+	for i in range(len(closed_list)):
+		temp = closed_list.pop()
+		img[temp.position[0]][temp.position[1]] = line_color
+	cv.imwrite(file_name, img)
+
+	print("Image saved as '" + file_name + "'")
