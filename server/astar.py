@@ -27,12 +27,6 @@ class Node():
 	def __eq__(self, other):
 		return self.position == other.position
 
-def getHeading(loc, next_loc):
-	if next_loc[1] - loc[1] == 0:
-			return 90 if next_loc[1] - loc[1] < 0 else -90
-	else:
-		return math.degrees(math.atan((next_loc[0]-loc[0])/(-(next_loc[1] - loc[1]))))
-
 def n_closest(x,n,d=1):
     return x[n[0] - d:n[0] + d + 1, n[1] - d:n[1] + d + 1]
 
@@ -41,13 +35,7 @@ def is_wide_enough(maze, loc, next_loc, vehicle, scale):
 		return True
 
 	thresh_grad = vehicle.clearance
-
-	#Determine which direction were going
-	heading = getHeading(loc, next_loc)
-
-	# if going at 45, 135, etc change scale
-	if heading % 90 != 0:
-		scale *= 1.4
+	scale *= 1.4
 
 	num_squares_width = math.ceil(vehicle.width / (2 * scale))
 	num_squares_length = math.ceil(vehicle.length / (2 * scale))

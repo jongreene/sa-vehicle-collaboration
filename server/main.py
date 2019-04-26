@@ -19,9 +19,12 @@ file_path = 'testTerrain.csv'
 vehicle_file = 'vehicle.json'
 
 terrain = np.genfromtxt(file_path, delimiter=',', dtype=float)
-start = (11, 11)
+
+# tell user if start and end points are invalid (too close to edge)
+# or if end point is in radius, call that arrival
+start = (10, 10)
 #end = (len(terrain) - 1, len(terrain[0]) - 1)
-end = (190, 190)
+end = (198, 198)
 
 vehicle_opts = None
 with open(vehicle_file, 'r') as j:
