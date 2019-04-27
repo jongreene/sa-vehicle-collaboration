@@ -5,6 +5,7 @@ import numpy as np
 from vehicle import Vehicle
 import json
 import os
+import time
 import cv2 as cv
 
 line_width = 1
@@ -15,7 +16,7 @@ end_color = (0,0,255)
 wall_color = (0,0,0)
 open_color = (255,255,255)
 
-file_path = 'testTerrain2.csv'
+file_path = 'testTerrain.csv'
 vehicle_file = 'vehicle.json'
 
 terrain = np.genfromtxt(file_path, delimiter=',', dtype=float)
@@ -23,8 +24,7 @@ terrain = np.genfromtxt(file_path, delimiter=',', dtype=float)
 # tell user if start and end points are invalid (too close to edge)
 # or if end point is in radius, call that arrival
 start = (15, 15)
-#end = (len(terrain) - 1, len(terrain[0]) - 1)
-end = (190, 15)
+end = (190, 190)
 
 vehicle_opts = None
 with open(vehicle_file, 'r') as j:
@@ -34,15 +34,13 @@ unit = '1cm'
 
 # find a path through the terrain
 print('Finding path... ', end='', flush=True)
-s = time.time()
-path = findPath(terrain, start, end, rover, unit, timeout=15)
+path = findPath(terrain, start, end, rover, unit)
 print('done')
-print(time.time() - s)
 
 # construct directions on how to follow path in desired format
-# print('Constructing vehicle instructions... ', end='')
-# directions = makeDirections(path, unit)
-# print('done')
+print('Constructing vehicle instructions... ', end='')
+directions = makeDirections(path, unit)
+print('done')
 
 # # send directions to rover
 # print('Sending instructions to rover... ')
