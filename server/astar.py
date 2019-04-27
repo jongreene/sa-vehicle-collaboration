@@ -126,14 +126,25 @@ def findPath(maze, start, end, vehicle, unit, timeout=60):
 	global terrain
 	terrain = maze
 	frontier = PriorityQueue()
-	frontier.put(start, 0)
+	frontier.put((0, start))
 	came_from = {}
 	cost_so_far = {}
 	came_from[start] = None
 	cost_so_far[start] = 0
 
+	img = np.zeros((len(maze), len(maze[0]), 3), np.uint8)
+
+	for i in range(len(maze)):
+			for j in range(len(maze[0])):
+				img[i][j] = wall_color if maze[i][j] == 0 else open_color
+
 	while not frontier.empty():
-		current = frontier.get()
+
+		for x in frontier.queue:
+			img[x[1][0]][x[1][1]] = line_color
+		cv.imwrite(file_name, img)
+		
+		current = frontier.get()[1]
 
 		if current == end:
 			break
@@ -143,7 +154,7 @@ def findPath(maze, start, end, vehicle, unit, timeout=60):
 			if next not in cost_so_far or new_cost < cost_so_far[next]:
 				cost_so_far[next] = new_cost
 				priority = new_cost + heuristic(end, next)
-				frontier.put(next, priority)
+				frontier.put((priority, next))
 				came_from[next] = current
 
 	current = end

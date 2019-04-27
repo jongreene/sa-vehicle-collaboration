@@ -15,7 +15,7 @@ end_color = (0,0,255)
 wall_color = (0,0,0)
 open_color = (255,255,255)
 
-file_path = 'testTerrain.csv'
+file_path = 'testTerrain2.csv'
 vehicle_file = 'vehicle.json'
 
 terrain = np.genfromtxt(file_path, delimiter=',', dtype=float)
@@ -24,7 +24,7 @@ terrain = np.genfromtxt(file_path, delimiter=',', dtype=float)
 # or if end point is in radius, call that arrival
 start = (15, 15)
 #end = (len(terrain) - 1, len(terrain[0]) - 1)
-end = (190, 190)
+end = (190, 15)
 
 vehicle_opts = None
 with open(vehicle_file, 'r') as j:
