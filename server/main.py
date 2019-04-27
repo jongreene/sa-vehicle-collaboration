@@ -22,9 +22,9 @@ terrain = np.genfromtxt(file_path, delimiter=',', dtype=float)
 
 # tell user if start and end points are invalid (too close to edge)
 # or if end point is in radius, call that arrival
-start = (10, 10)
+start = (15, 15)
 #end = (len(terrain) - 1, len(terrain[0]) - 1)
-end = (198, 198)
+end = (190, 190)
 
 vehicle_opts = None
 with open(vehicle_file, 'r') as j:
@@ -33,9 +33,11 @@ rover = Vehicle(vehicle_opts)
 unit = '1cm'
 
 # find a path through the terrain
-print('Finding path... ', end='')
-path = findPath(terrain, start, end, rover, unit)
+print('Finding path... ', end='', flush=True)
+s = time.time()
+path = findPath(terrain, start, end, rover, unit, timeout=15)
 print('done')
+print(time.time() - s)
 
 # construct directions on how to follow path in desired format
 # print('Constructing vehicle instructions... ', end='')
