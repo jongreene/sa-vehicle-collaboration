@@ -1,3 +1,5 @@
+# This implementation is a modified version of https://www.redblobgames.com/pathfinding/a-star/implementation.html
+
 import math
 import numpy as np
 from vehicle import Vehicle
