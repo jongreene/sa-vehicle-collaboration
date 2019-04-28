@@ -11,9 +11,7 @@ data = None
 
 ble = Adafruit_BluefruitLE.get_provider()
 
-turn_values = {'90': .71, '-90': .71, '45': .38, '-45': .38}
-
-data = [('90', '1'), ('90', '1'), ('90', '1'), ('90', '1')]
+turn_values = {'90': .71, '-90': .71, '45': .35, '-45': .35}
 
 def turn(a):
 
@@ -23,11 +21,11 @@ def turn(a):
 	else:
 		s = s + '-75,75,'
 
-	s = s + str(turn_values[a]) + '}'
+	s = s + str(turn_values[str(a)]) + '}'
 
 	send_cmd(s)
 
-	return turn_values[a]
+	return turn_values[str(a)]
 
 # d = distance in meters
 def drive(d):
@@ -57,7 +55,11 @@ def send_cmd(string):
 
 	received = uart.read(timeout_sec=2)
 	while received is not None and received[-1] != '\n':
-		received = received + uart.read(timeout_sec=2)
+		temp = uart.read(timeout_sec=2)
+		if temp is not None:
+			received = received + temp
+		else:
+			break
 	if received is not None:
 		print('Received:', received[:-1])
 	else:
@@ -104,7 +106,7 @@ def main():
 				s = '{drive,two_wheel,0,0}'
 				send_cmd(s)
 			elif s.split(' ')[0] == 'd':
-				move(s.split(' ')[1])
+				drive(s.split(' ')[1])
 			elif s.split(' ')[0] == 'a':
 				turn(s.split(' ')[1])
 			elif len(s.split(' ')) == 2:

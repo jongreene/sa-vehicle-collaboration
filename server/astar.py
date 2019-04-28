@@ -69,7 +69,7 @@ def wideFilter(vehicle, scale, maze):
 
 		for i in box:
 			for j in i:
-				if abs(j - maze[pos[0]][pos[1]]) / s > thresh_grad:
+				if abs(j - maze[pos[0]][pos[1]]) > thresh_grad:
 					break
 				good += 1
 

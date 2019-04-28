@@ -25,7 +25,7 @@ def makeDirections(path, unit, heading=0):
 		length = res if next_heading % 90 == 0 else 1.4 * res
 
 		# add to directions list
-		if next_heading == old_heading:
+		if next_heading == old_heading and len(directions) != 0:
 			directions[-1] = (int(next_heading), round(float(directions[-1][1]) + length, 2))
 		else:
 			directions.append((int(next_heading - old_heading), float(length)))
@@ -33,7 +33,14 @@ def makeDirections(path, unit, heading=0):
 
 	directions[0] = (directions[0][0], directions[0][1] / 100)
 
+	print('\nbefore', directions)
+
 	for i in range(len(directions) - 1, 0, -1):
-		directions[i] = (directions[i][0] - directions[i - 1][0], directions[i][1] / 100)
+		d = directions[i][0] - directions[i - 1][0]
+		if d > 90:
+			d = d - 180
+		directions[i] = (d, directions[i][1] / 100)
+
+	print('after', directions)
 
 	return directions
