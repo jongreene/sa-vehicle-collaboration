@@ -29,7 +29,10 @@ def makeDirections(path, unit, heading=0):
 		if next_heading == old_heading:
 			directions[-1] = (int(next_heading), '{}{}'.format(round(float(directions[-1][1].replace(unit, '')) + length, 2), unit))
 		else:
-			directions.append((int(next_heading) - old_heading, '{}{}'.format(float(length), unit)))
+			directions.append((int(next_heading - old_heading), '{}{}'.format(float(length), unit)))
 		old_heading = next_heading
+
+	for i in range(len(directions) - 1, 0, -1):
+		directions[i] = (directions[i][0] - directions[i - 1][0], directions[i][1])
 
 	return directions

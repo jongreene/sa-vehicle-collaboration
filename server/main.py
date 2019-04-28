@@ -33,9 +33,11 @@ rover = Vehicle(vehicle_opts)
 unit = '1cm'
 
 # find a path through the terrain
+s = time.time()
 print('Finding path... ', end='', flush=True)
 path = findPath(terrain, start, end, rover, unit)
 print('done')
+print(time.time() - s)
 
 # construct directions on how to follow path in desired format
 print('Constructing vehicle instructions... ', end='')

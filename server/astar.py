@@ -112,7 +112,7 @@ def findPath(maze, start, end, vehicle, unit):
 	cost_so_far[start] = 0
 
 	while not frontier.empty():
-		
+
 		current = frontier.get()[1]
 
 		if current == end:
