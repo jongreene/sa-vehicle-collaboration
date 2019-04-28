@@ -119,7 +119,6 @@ def main():
 
 			send_cmd(s)
 
-
 		global data
 		for d in data:
 			time.sleep(turn(d[0]) + 1)

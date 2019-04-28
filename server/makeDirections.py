@@ -7,7 +7,6 @@ def makeDirections(path, unit, heading=0):
 	directions = []
 
 	s_u = ''.join(i for i in unit if not i.isalpha())
-	unit = ''.join(i for i in unit if not i.isdigit())
 	if not s_u: s_u = '1'
 	res = float(s_u)
 
@@ -27,12 +26,14 @@ def makeDirections(path, unit, heading=0):
 
 		# add to directions list
 		if next_heading == old_heading:
-			directions[-1] = (int(next_heading), '{}{}'.format(round(float(directions[-1][1].replace(unit, '')) + length, 2), unit))
+			directions[-1] = (int(next_heading), round(float(directions[-1][1]) + length, 2))
 		else:
-			directions.append((int(next_heading - old_heading), '{}{}'.format(float(length), unit)))
+			directions.append((int(next_heading - old_heading), float(length)))
 		old_heading = next_heading
 
+	directions[0] = (directions[0][0], directions[0][1] / 100)
+
 	for i in range(len(directions) - 1, 0, -1):
-		directions[i] = (directions[i][0] - directions[i - 1][0], directions[i][1])
+		directions[i] = (directions[i][0] - directions[i - 1][0], directions[i][1] / 100)
 
 	return directions
