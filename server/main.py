@@ -7,7 +7,7 @@ import json
 import os
 import time
 
-running_on_pi = False
+running_on_pi = True
 
 file_path = 'terrain.csv'
 vehicle_file = 'vehicle.json'
@@ -33,8 +33,8 @@ directions = makeDirections(path, unit)
 print('done')
 
 # # send directions to rover
-# print('Sending instructions to rover... ')
-# send(directions)
+print('Sending instructions to rover... ')
+send(directions)
 
 if not running_on_pi:
 	import cv2 as cv

@@ -1,4 +1,4 @@
-import math
+from math import atan, degrees
 
 # given a path, make a list of directions with a heading and a length
 def makeDirections(path, unit, heading=0):
@@ -11,18 +11,26 @@ def makeDirections(path, unit, heading=0):
 	res = float(s_u)
 
 	for i in range(len(path)-1):
-		curr_pos = path[i]
-		next_pos = path[i+1]
+		(dy, dx) = path[i + 1][0] - path[i][0], path[i + 1][1] - path[i][1]
 
 		# get next heading
 		# avoid division by zero in atan
-		if next_pos[1] - curr_pos[1] == 0:
-			next_heading = 90 if next_pos[1] - curr_pos[1] < 0 else -90
+		if dx == 0:
+			next_heading = -90 if dy == 1 else 90
+		elif dy == 0:
+			next_heading = -180 if dx == -1 else 0
+		elif dx < 0 and dy < 0:
+			next_heading = 180 - degrees(atan(dy / dx))
+		elif dx < 0 and dy > 0:
+			next_heading = degrees(atan(dy / -dx)) - 180
 		else:
-			next_heading = math.degrees(math.atan((next_pos[0]-curr_pos[0])/(-(next_pos[1] - curr_pos[1]))))
+			next_heading = degrees(atan(dy / -dx))
 
 		# get next length
 		length = res if next_heading % 90 == 0 else 1.4 * res
+
+		# convert from cm to m
+		length /= 100
 
 		# add to directions list
 		if next_heading == old_heading and len(directions) != 0:
@@ -31,16 +39,8 @@ def makeDirections(path, unit, heading=0):
 			directions.append((int(next_heading - old_heading), float(length)))
 		old_heading = next_heading
 
-	directions[0] = (directions[0][0], directions[0][1] / 100)
-
-	print('\nbefore', directions)
-
+	# convert to relative heading
 	for i in range(len(directions) - 1, 0, -1):
-		d = directions[i][0] - directions[i - 1][0]
-		if d > 90:
-			d = d - 180
-		directions[i] = (d, directions[i][1] / 100)
-
-	print('after', directions)
+		directions[i] = (directions[i][0] - directions[i - 1][0], directions[i][1])
 
 	return directions
