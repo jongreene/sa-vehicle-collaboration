@@ -1,13 +1,12 @@
 from astar import *
 from makeDirections import makeDirections
-#from connection import *
 import numpy as np
 from vehicle import Vehicle
 import json
 import os
 import time
 
-running_on_pi = True
+running_on_pi = False
 
 file_path = 'terrain.csv'
 vehicle_file = 'vehicle.json'
@@ -32,9 +31,11 @@ print('Constructing vehicle instructions... ', end='')
 directions = makeDirections(path, unit)
 print('done')
 
-# # send directions to rover
-print('Sending instructions to rover... ')
-send(directions)
+# send directions to rover
+if running_on_pi:
+	from connection import *
+	print('Sending instructions to rover... ')
+	send(directions)
 
 if not running_on_pi:
 	import cv2 as cv
