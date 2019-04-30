@@ -3,9 +3,11 @@ import matplotlib.pyplot as plt
 import importlib
 importlib.import_module('mpl_toolkits.mplot3d').Axes3D
 
-file_name = 'terrain.csv'
+file_name = 'room_scan.csv'
 
 terrain = np.genfromtxt(file_name, dtype=float, delimiter=',')
+
+terrain = np.flip(terrain, axis=0)
 
 x = range(len(terrain))
 y = range(len(terrain[0]))

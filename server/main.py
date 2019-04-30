@@ -8,18 +8,18 @@ import time
 
 running_on_pi = False
 
-file_path = 'terrain.csv'
+file_path = 'room_scan.csv'
 vehicle_file = 'vehicle.json'
 
 terrain = np.genfromtxt(file_path, delimiter=',', dtype=float)
-start = (1,1)
-end = (7,1)
+start = (11,3)
+end = (28, 40)
 
 vehicle_opts = None
 with open(vehicle_file, 'r') as j:
 	vehicle_opts = json.load(j)
 rover = Vehicle(vehicle_opts)
-unit = '23cm'
+unit = '30.5cm'
 
 # find a path through the terrain
 print('Finding path... ', end='', flush=True)
@@ -52,7 +52,7 @@ if not running_on_pi:
 
 	for i in range(len(terrain)):
 		for j in range(len(terrain[0])):
-			img[i][j] = wall_color if terrain[i][j] > 2800 else open_color
+			img[i][j] = wall_color if terrain[i][j] != 0 else open_color
 
 	for i in path:
 		img[i[0]][i[1]] = line_color
