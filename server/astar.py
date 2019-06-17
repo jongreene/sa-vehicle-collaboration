@@ -47,6 +47,8 @@ def passableFilter(terrain, pos, vehicle, scale):
 		(x2, y2) = next_pos
 		rise = terrain[x2][y2] - terrain[x1][y1]
 		run = scale * get_cost(pos, next_pos)
+		if terrain[next_pos] == 60:
+			print(-np.arctan(rise / run))
 		return vehicle.canTraverse(-np.arctan(rise / run), rise)
 	return f
 
