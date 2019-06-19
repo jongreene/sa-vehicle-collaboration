@@ -2,7 +2,7 @@
 
 import math
 import numpy as np
-from vehicle import Vehicle
+from server.submodules.vehicle import Vehicle
 from queue import PriorityQueue
 
 def n_closest(x,n,d=1):
