@@ -13,8 +13,20 @@ ble = Adafruit_BluefruitLE.get_provider()
 
 turn_values = {'90': .71, '-90': .71, '45': .35, '-45': .35}
 
-def turn(a):
+# over ramp
+# data = [(0, 1.15), (-90, 1.65), (-90, 1.2)]
 
+# maze
+# data = [(0, 1.7), (-90, .5), (-90, 1.7), (90, .1), (45, 1.7), (-45, .1), (-90, 1)]
+
+# room (scan)
+#data = [(0, 11.94), (-45, 2.3), (-45, 2.5), (45, 1.6), (-45, 2.5), (-90, 14.2), (-90, 4.5)]
+
+# room (experimental)
+
+def turn(a):
+	if int(a) == 0:
+		return 0
 	s = '{drive,two_wheel,'
 	if int(a) > 0:
 		s = s + '75,-75,'
@@ -100,11 +112,8 @@ def main():
 				s = '{drive,two_wheel,0,0}'
 				send_cmd(s)
 			elif s.split(' ')[0] == 't':
-				s1 = '{drive,two_wheel,' + s.split(' ')[1] + ',' + s.split(' ')[2] + '}'
+				s1 = '{drive,two_wheel,' + s.split(' ')[1] + ',' + s.split(' ')[2] + ',' + s.split(' ')[3] + '}'
 				send_cmd(s1)
-				time.sleep(float(s.split(' ')[3]))
-				s = '{drive,two_wheel,0,0}'
-				send_cmd(s)
 			elif s.split(' ')[0] == 'd':
 				drive(s.split(' ')[1])
 			elif s.split(' ')[0] == 'a':
@@ -123,8 +132,8 @@ def main():
 
 		global data
 		for d in data:
-			time.sleep(turn(d[0]) + 1)
-			time.sleep(drive(d[1]) + 1)
+			time.sleep(turn(d[0]) + 0.5)
+			time.sleep(drive(d[1]) + 0.5)
 
 	finally:
 		device.disconnect()

@@ -28,7 +28,6 @@ ALTITUDE = HEIGHT * CONV * 1000  # height in centimeters, in practice this shoul
 # Inputs: none
 # Returns: int (depth value)
 def get_depth():
-
     num = 0
 
     for i in range(0,4):

@@ -28,7 +28,7 @@ class Vehicle:
 
 	def canTraverse(self, angle, rise):
 		if self.max != 'None':
-			return angle < float(self.max)
+			return abs(angle) < float(self.max)
 
 		if self.clearance > abs(rise):
 			return True
